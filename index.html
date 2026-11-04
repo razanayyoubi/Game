@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Career Quest</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #070d0b;
+            --panel: #0e1a15;
+            --line: #24473a;
+            --mint: #3ee08f;
+            --txt: #eef7f1;
+            --mut: #8fd9b3;
+            --bad: #ff5d73;
+            --gold: #ffd23f;
+            color-scheme: dark;
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px)
+        }
+
+        html {
+            scroll-padding-top: env(safe-area-inset-top, 0px)
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--txt);
+            font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+            min-height: 100vh;
+            background-image: radial-gradient(ellipse at 50% 0%, #12382a 0, transparent 65%), radial-gradient(#16271f 1px, transparent 1px);
+            background-size: 100% 100%, 22px 22px;
+            background-repeat: no-repeat, repeat
+        }
+
+        #app {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 18px 16px 40px
+        }
+
+        .back {
+            background: transparent;
+            border: 2px solid var(--line);
+            color: var(--mut);
+            border-radius: 10px;
+            padding: 6px 12px;
+            font: 700 13px "JetBrains Mono", monospace;
+            letter-spacing: 1px;
+            cursor: pointer
+        }
+
+        .nav {
+            display: flex;
+            gap: 8px
+        }
+
+        .top {
+            align-items: center
+        }
+
+        .back:hover {
+            border-color: var(--mint);
+            color: var(--txt)
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            letter-spacing: 3px;
+            color: var(--mut);
+            border-bottom: 2px solid var(--mint);
+            padding-bottom: 8px;
+            margin-bottom: 22px
+        }
+
+        h1 {
+            font-size: clamp(34px, 8vw, 56px);
+            line-height: 1;
+            margin: 0 0 8px;
+            color: var(--mint);
+            font-weight: 800
+        }
+
+        h1 span,
+        .cur {
+            color: var(--txt);
+            animation: blink 1s steps(2) infinite
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0
+            }
+        }
+
+        p.sub {
+            color: var(--mut);
+            margin: 0 0 20px;
+            font-size: 15px
+        }
+
+        .card {
+            background: var(--panel);
+            border: 2px solid var(--line);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 16px
+        }
+
+        input {
+            width: 100%;
+            background: #050a08;
+            border: 2px solid var(--line);
+            border-radius: 12px;
+            color: var(--txt);
+            font: 700 16px "JetBrains Mono", monospace;
+            padding: 12px 14px;
+            margin-bottom: 14px
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--mint)
+        }
+
+        button {
+            font: 800 16px "JetBrains Mono", monospace;
+            cursor: pointer;
+            color: var(--txt)
+        }
+
+        .big {
+            width: 100%;
+            background: var(--mint);
+            color: #04120b;
+            border: 0;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 10px;
+            transition: transform .12s
+        }
+
+        .big.alt {
+            background: transparent;
+            color: var(--mint);
+            border: 2px solid var(--mint)
+        }
+
+        .big:hover,
+        .role:hover {
+            transform: translateY(-3px)
+        }
+
+        .big:focus-visible,
+        .role:focus-visible,
+        .opt:focus-visible {
+            outline: 3px solid var(--gold);
+            outline-offset: 2px
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px
+        }
+
+        .chip {
+            border: 2px solid;
+            border-radius: 999px;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 700
+        }
+
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: var(--mut)
+        }
+
+        .hud b {
+            color: var(--txt);
+            font-size: 18px
+        }
+
+        .bar {
+            height: 10px;
+            background: #050a08;
+            border: 2px solid var(--line);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-bottom: 16px
+        }
+
+        .bar i {
+            display: block;
+            height: 100%;
+            width: 100%;
+            background: var(--mint);
+            transition: width .1s linear
+        }
+
+        .q {
+            font-size: clamp(18px, 4.4vw, 24px);
+            line-height: 1.4;
+            font-weight: 700;
+            margin: 0 0 6px
+        }
+
+        .tag {
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: var(--gold)
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px
+        }
+
+        .role {
+            background: var(--panel);
+            border: 2px solid;
+            border-radius: 14px;
+            padding: 18px 10px;
+            text-align: center;
+            transition: transform .12s, background .12s;
+            min-height: 110px;
+            font-size: 19px;
+            line-height: 1.3
+        }
+
+        .role small {
+            display: block;
+            font-weight: 400;
+            font-size: 13px;
+            color: var(--mut);
+            margin-top: 6px
+        }
+
+        .role .k {
+            opacity: .6;
+            font-size: 13px
+        }
+
+        .role.ok {
+            background: #12452c;
+            animation: pop .4s
+        }
+
+        .role.no {
+            background: #4a1520;
+            animation: shake .4s
+        }
+
+        .role[disabled] {
+            cursor: default
+        }
+
+        @keyframes pop {
+            50% {
+                transform: scale(1.07)
+            }
+        }
+
+        @keyframes shake {
+            25% {
+                transform: translateX(-7px)
+            }
+
+            75% {
+                transform: translateX(7px)
+            }
+        }
+
+        .fb {
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 14px;
+            border: 2px solid var(--line);
+            font-size: 14px;
+            line-height: 1.5
+        }
+
+        .fb b.g {
+            color: var(--mint)
+        }
+
+        .fb b.r {
+            color: var(--bad)
+        }
+
+        .next {
+            margin-top: 12px
+        }
+
+        .qcard .q {
+            font-size: clamp(24px, 6vw, 34px);
+            line-height: 1.4
+        }
+
+        .qcard .tag {
+            font-size: 14px
+        }
+
+        .grid {
+            margin-top: 26px
+        }
+
+        .role {
+            font-size: 21px;
+            min-height: 120px
+        }
+
+        .job {
+            font-size: clamp(30px, 8vw, 46px) !important;
+            font-weight: 800;
+            line-height: 1.15;
+            margin: 6px 0 8px !important
+        }
+
+        .stat {
+            font-size: clamp(46px, 12vw, 80px);
+            font-weight: 800;
+            color: var(--gold);
+            line-height: 1
+        }
+
+        .lb {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px
+        }
+
+        .lb td {
+            padding: 6px 4px;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .lb td:last-child {
+            text-align: right;
+            color: var(--gold);
+            font-weight: 700
+        }
+
+        .opt {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: var(--panel);
+            border: 2px solid var(--line);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
+            transition: transform .12s, border-color .12s
+        }
+
+        .opt:hover {
+            border-color: var(--mint);
+            transform: translateX(4px)
+        }
+
+        .conf {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: 40%;
+            left: 50%;
+            pointer-events: none;
+            border-radius: 2px;
+            animation: fly 1s ease-out forwards;
+            z-index: 9
+        }
+
+        @keyframes fly {
+            to {
+                transform: translate(var(--x), var(--y)) rotate(540deg);
+                opacity: 0
+            }
+        }
+
+        .enter {
+            animation: in .35s ease-out
+        }
+
+        @keyframes in {
+            from {
+                opacity: 0;
+                transform: translateY(12px)
+            }
+        }
+
+        .two {
+            display: block
+        }
+
+        .qr {
+            display: none;
+            text-align: center
+        }
+
+        .qrbox {
+            width: 210px;
+            margin: 12px auto 0;
+            border-radius: 12px;
+            overflow: hidden
+        }
+
+        .qrbox svg {
+            display: block;
+            width: 100%
+        }
+
+        .foot {
+            color: var(--mut);
+            font-size: 12px;
+            text-align: center;
+            margin-top: 18px;
+            letter-spacing: 1px
+        }
+
+        @media (min-width:900px) {
+
+            html,
+            body {
+                height: 100%
+            }
+
+            body {
+                overflow-x: hidden;
+                overflow-y: auto
+            }
+
+            #app {
+                max-width: 900px;
+                padding: 12px 18px
+            }
+
+            .top {
+                margin-bottom: 10px;
+                padding-bottom: 6px;
+                font-size: 11px
+            }
+
+            h1 {
+                font-size: 38px;
+                margin-bottom: 4px
+            }
+
+            p.sub {
+                font-size: 13px;
+                margin-bottom: 10px
+            }
+
+            .two {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                align-items: start
+            }
+
+            .card {
+                padding: 12px;
+                margin-bottom: 10px;
+                border-radius: 14px
+            }
+
+            .big {
+                padding: 10px;
+                margin-bottom: 8px;
+                font-size: 14px;
+                border-radius: 12px
+            }
+
+            .hud {
+                margin-bottom: 6px;
+                font-size: 13px
+            }
+
+            .hud b {
+                font-size: 16px
+            }
+
+            .bar {
+                margin-bottom: 10px;
+                height: 8px
+            }
+
+            .q {
+                font-size: 18px;
+                margin-bottom: 4px
+            }
+
+            .grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px
+            }
+
+            .role {
+                min-height: 86px;
+                padding: 12px;
+                font-size: 18px;
+                border-radius: 12px
+            }
+
+            .role small {
+                margin-top: 2px
+            }
+
+            .fb {
+                margin-top: 8px;
+                padding: 10px;
+                font-size: 13px;
+                line-height: 1.4
+            }
+
+            .opt {
+                padding: 10px;
+                margin-bottom: 8px;
+                font-size: 14px
+            }
+
+            .stat {
+                font-size: 48px
+            }
+
+            .foot {
+                margin-top: 8px
+            }
+        }
+
+        @media (min-width:900px) {
+            #app.pg .top {
+                margin-bottom: 24px;
+                padding-bottom: 10px
+            }
+
+            #app.pg .hud {
+                margin-bottom: 14px
+            }
+
+            #app.pg .bar {
+                margin-bottom: 22px
+            }
+
+            #app.pg .card {
+                padding: 20px 22px;
+                margin-bottom: 22px
+            }
+
+            #app.pg .tag {
+                margin-bottom: 12px
+            }
+
+            #app.pg .q {
+                line-height: 1.55;
+                margin: 0
+            }
+
+            #app.pg .card p.q {
+                margin: 12px 0 0
+            }
+
+            #app.pg .card p.sub {
+                margin: 8px 0 16px
+            }
+
+            #app.pg .grid {
+                gap: 14px
+            }
+
+            #app.pg .role {
+                min-height: 120px;
+                padding: 18px 10px;
+                font-size: 22px
+            }
+
+            #app.pg .role small {
+                margin-top: 10px;
+                font-size: 14px
+            }
+
+            #app.pg .fb {
+                margin-top: 18px;
+                padding: 14px 18px;
+                line-height: 1.65
+            }
+
+            #app.pg .card .fb {
+                margin-top: 14px
+            }
+
+            #app.pg .next {
+                margin-top: 16px
+            }
+
+            #app.pg .opt {
+                padding: 18px 20px;
+                margin-bottom: 14px
+            }
+
+            #app.pg .big {
+                padding: 14px;
+                margin-bottom: 12px
+            }
+
+            #app.pg .stat {
+                margin: 10px 0 6px
+            }
+        }
+
+        .hero {
+            text-align: center;
+            padding: 6px 0
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 6vw, 64px);
+            letter-spacing: -1px;
+            margin-bottom: 6px
+        }
+
+        .hero .sub {
+            font-size: 15px;
+            margin-bottom: 18px
+        }
+
+        .acts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            max-width: 600px;
+            margin: 0 auto 14px
+        }
+
+        .acts .big {
+            margin: 0
+        }
+
+        .roles {
+            max-width: 660px;
+            margin: 0 auto 4px
+        }
+
+        .roles .chips {
+            justify-content: center;
+            margin-top: 10px
+        }
+
+        .card {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .35)
+        }
+
+        .big {
+            box-shadow: 0 6px 18px rgba(62, 224, 143, .15)
+        }
+
+        .big.alt {
+            box-shadow: none
+        }
+
+        @media (min-width:900px) {
+            #app.pg .qcard .q {
+                font-size: 32px;
+                line-height: 1.45
+            }
+
+            #app.pg .qcard {
+                padding: 26px 28px
+            }
+
+            #app.pg .grid {
+                margin-top: 34px;
+                gap: 16px
+            }
+
+            #app.pg .role {
+                min-height: 135px;
+                font-size: 24px;
+                padding: 20px 10px
+            }
+
+            #app.pg .role small {
+                font-size: 15px
+            }
+        }
+
+        @media (max-width:600px) {
+            .acts {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media (max-width:380px) {
+            .grid {
+                grid-template-columns: 1fr
+            }
+
+            .role {
+                min-height: 80px;
+                font-size: 18px
+            }
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            * {
+                animation: none !important;
+                transition: none !important
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div id="app"></div>
+    <script>
+        var R = {
+            DA: { n: "Data Analyst", i: "📊", c: "#4aa3f0", t: "Shows what happened", d: "You look at numbers, make charts and tell people what is happening in the business.", k: "SQL · Excel · Power BI · Tableau", l: "Banks, shops, phone companies, hospitals, charities and consulting firms." },
+            DE: { n: "Data Engineer", i: "🛠️", c: "#b18cff", t: "Builds the data pipes", d: "You make sure data is collected, cleaned and stored so everyone else can use it.", k: "Python · SQL · Spark · Airflow · Cloud", l: "Banks, fintech, phone companies, big online services, and remote work for companies abroad." },
+            DS: { n: "Data Scientist", i: "🔬", c: "#3ee08f", t: "Finds why and predicts next", d: "You study data to find patterns, explain why things happen and predict what comes next.", k: "Python · Statistics · Pandas · scikit-learn", l: "Banks, insurance, phone companies, health, universities, and remote teams abroad." },
+            MLE: { n: "ML Engineer", i: "⚙️", c: "#ffd23f", t: "Trains models that work", d: "You take AI models that work in tests and make them work fast and reliably for real users.", k: "Python · PyTorch · Docker · MLOps", l: "Startups, fintech, big tech companies, and remote teams abroad. Often a next step after data science or software." },
+            AIE: { n: "AI Engineer", i: "🤖", c: "#ff7ab8", t: "Builds smart apps", d: "You build apps that use ready-made AI, like chatbots and smart assistants.", k: "Python · AI tools · Prompting · JavaScript", l: "Startups, software agencies, universities, and remote work. A fast-growing area." },
+            DEV: { n: "Backend / Full-Stack Dev", i: "💻", c: "#ff9f43", t: "Builds the product users touch", d: "You build the websites and apps people use, plus the servers and databases behind them.", k: "JavaScript · Databases · Git · Web basics", l: "Software companies, startups, banks, and freelance or remote work for clients abroad." }
+        };
+        var KEYS = ["DA", "DE", "DS", "MLE", "AIE", "DEV"];
+        var S = [
+            ["A shop owner asks: “Which product sold the most last month?” You make a simple chart that shows the answer.", "DA", "Analysts look at numbers and explain what is happening, using charts and reports."],
+            ["A university wants to know which course has the most students failing. You collect the numbers and show them in a clear report.", "DA", "Turning numbers into an easy report that people can act on is the analyst’s main job."],
+            ["A company’s data comes from many places and is messy. You build the system that collects it and keeps it neat for everyone else.", "DE", "Data engineers make sure the data is collected, stored and ready to use."],
+            ["Every morning the team’s reports are empty because the data never arrived. You find the problem and fix it.", "DE", "If the data does not arrive, nobody can work. Data engineers keep it flowing."],
+            ["A phone company wants to guess which customers will cancel next month, and find out why.", "DS", "Data scientists find patterns in past data to explain things and predict what comes next."],
+            ["A café wants to guess how many sandwiches it will sell tomorrow, using past sales and the weather.", "DS", "Predicting the future from past data is a core data science task."],
+            ["Your friend built a smart model on a laptop. Now you must make it run fast and never crash for 1 million app users.", "MLE", "ML engineers take models that work in tests and make them work for real users."],
+            ["A smart model worked great last month but now makes many mistakes. You find out why and teach it again.", "MLE", "Models can get worse when the world changes. ML engineers watch them and retrain them."],
+            ["Build a chatbot, like ChatGPT, that answers students’ questions for a university.", "AIE", "AI engineers build apps that use ready-made AI, like chatbots and assistants."],
+            ["Add an AI feature to an app that writes a short summary of a long email.", "AIE", "Adding AI features to real apps is what AI engineers do every day."],
+            ["Build the website where people order food: the pages they see and the server that saves their orders.", "DEV", "Developers build the websites and apps people use, plus the server behind them."],
+            ["Make the login page and the payment screen of a new app work properly on phones and computers.", "DEV", "Full-stack developers handle both what users see and what happens behind the screen."]
+        ];
+        var M = [
+            ["Your ideal Friday task?", [["Turn numbers into a clear story", ["DA", "DS"]], ["Build things that keep running by themselves", ["DE", "DEV"]], ["Make AI do something that feels like magic", ["AIE", "MLE"]]]],
+            ["Your superpower?", [["Curiosity: why did this happen?", ["DS", "DA"]], ["Reliability: things just work", ["DE", "MLE", "DEV"]], ["Creativity: new things with AI", ["AIE"]]]],
+            ["Tools you would enjoy most?", [["Charts and spreadsheets", ["DA"]], ["Statistics and finding patterns", ["DS"]], ["Code, websites and apps", ["DEV", "DE"]], ["AI and smart models", ["MLE", "AIE"]]]],
+            ["What do you want to deliver?", [["A report people can act on", ["DA"]], ["A smart guess about the future", ["DS"]], ["An app people use every day", ["DEV", "AIE"]], ["Something big that runs behind the scenes", ["DE", "MLE"]]]],
+            ["Your team style?", [["Talking with people about their needs", ["DA", "DS"]], ["Quietly building things", ["DEV", "DE", "MLE"]], ["Experimenting with new tech", ["AIE", "DS"]]]]
+        ];
+        var $ = document.getElementById("app"), g = {}, tm = null;
+        function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML }
+        function hdr() { var b = g.scr && g.scr !== "menu"; return '<div class="top">' + (b ? '<span class="nav"><button class="back" onclick="back()">← Back</button><button class="back" onclick="menu()">⌂ Home</button></span>' : '<span>DATA SCIENCE BOOTH</span>') + '<span>' + (b ? '' : '') + 'BOOTH 04</span></div>' }
+        function rs() { var o = g.snap[g.i]; g.s = o.s; g.st = o.st; g.r = o.r; g.miss = JSON.parse(JSON.stringify(o.miss)) }
+        function back() {
+            if (g.scr === "match" && g.mi > 0) { g.mi--; var i = g.ans.pop(); M[g.mi][1][i][1].forEach(function (k) { g.sc[k]-- }); mq() }
+            else if (g.scr === "result" && g.mode === "match" && g.ans && g.ans.length) { g.mi = M.length - 1; var j = g.ans.pop(); M[g.mi][1][j][1].forEach(function (k) { g.sc[k]-- }); mq() }
+            else if (g.scr === "quiz" && g.i > 0) { clearInterval(tm); g.i--; rs(); ask() }
+            else if (g.scr === "result" && g.mode === "quiz" && g.snap && g.snap[9]) { g.i = 9; rs(); ask() }
+            else menu()
+        }
+        function show(h) { clearInterval(tm); $.innerHTML = hdr() + '<div class="enter">' + h + '</div>'; window.scrollTo(0, 0); $.className = (g.scr && g.scr !== "menu") ? "pg" : ""; fit() }
+        function fit() { if (innerWidth < 900) { $.style.zoom = ""; $.style.marginTop = ""; return } $.style.marginTop = ""; $.style.zoom = 1; var r = g.scr === "quiz" ? 200 : 0, h = Math.max($.offsetHeight + r, g.scr === "menu" ? 400 : 680), z = Math.max(.75, Math.min(Math.min(innerWidth / 940, innerHeight / h) * .97, 3.2)); $.style.zoom = z; $.style.marginTop = Math.max(0, (innerHeight / z - $.offsetHeight - r) / 2) + "px" }
+        onresize = fit;
+        function lb() { try { return JSON.parse(localStorage.getItem("cq_lb") || "[]") } catch (e) { return [] } }
+        function save(n, s) { var a = lb(); a.push({ n: n, s: s }); a.sort(function (x, y) { return y.s - x.s }); a = a.slice(0, 5); try { localStorage.setItem("cq_lb", JSON.stringify(a)) } catch (e) { } }
+        function chips() { return KEYS.map(function (k) { return '<span class="chip" style="color:' + R[k].c + ';border-color:' + R[k].c + '">' + R[k].i + " " + R[k].n + "</span>" }).join("") }
+        function menu() {
+            g.scr = "menu";
+            show('<div class="hero"><div class="tag">DATA SCIENCE BOOTH · BINARY BRAINS</div><h1>Career Quest<span>_</span></h1><p class="sub">One major. Many careers. Find your path.</p><div class="acts"><button class="big" onclick="startQuiz()">▶ Play: Who Does What?</button><button class="big alt" onclick="startMatch()">◆ Find the role that fits me</button></div><div class="card roles"><div class="tag">THE ROLES</div><div class="chips">' + chips() + '</div></div><p class="foot">Data Science Booth 04 · Explore your data future_</p></div>')
+        }
+        function nm() { var e = document.getElementById("nm"); g.name = (e && e.value.trim()) || g.name || "Guest" }
+        function startQuiz() { nm(); g.q = S.slice().sort(function () { return Math.random() - .5 }).slice(0, 10); g.i = 0; g.s = 0; g.st = 0; g.r = 0; g.miss = {}; g.snap = []; g.mode = "quiz"; ask() }
+        function ask() {
+            var q = g.q[g.i]; g.scr = "quiz"; g.lock = false; g.left = 20; g.snap[g.i] = { s: g.s, st: g.st, r: g.r, miss: JSON.parse(JSON.stringify(g.miss)) };
+            show('<div class="hud"><span>Question <b>' + (g.i + 1) + "/10</b></span><span>🔥 Streak <b>" + g.st + "</b></span><span>Score <b>" + g.s + '</b></span></div><div class="bar"><i id="bar"></i></div>' +
+                '<div class="card qcard"><div class="tag">WHO WOULD DO THIS AT WORK?</div><p class="q">' + q[0] + '</p></div><div class="grid">' +
+                KEYS.map(function (k, i) { return '<button class="role" style="border-color:' + R[k].c + '" data-k="' + k + '" onclick="pick(\'' + k + '\')">' + R[k].i + " " + R[k].n + '<small class="k">press ' + (i + 1) + "</small></button>" }).join("") + '</div><div id="fb"></div>');
+            tm = setInterval(function () { g.left -= .1; var b = document.getElementById("bar"); if (b) { b.style.width = Math.max(0, g.left / 20 * 100) + "%"; if (g.left < 6) b.style.background = "var(--bad)" } if (g.left <= 0) pick(null) }, 100)
+        }
+        function pick(k) {
+            if (g.lock) return; g.lock = true; clearInterval(tm);
+            var q = g.q[g.i], ok = k === q[1], h;
+            if (ok) { g.r++; g.st++; var pts = 100; g.s += pts; h = '<b class="g">✔ Correct! +' + pts + "</b>"; burst() }
+            else { g.st = 0; g.miss[q[1]] = (g.miss[q[1]] || 0) + 1; h = '<b class="r">✘ ' + (k ? "Not quite." : "Time’s up!") + " It was " + R[q[1]].i + " " + R[q[1]].n + ".</b>" }
+            document.querySelectorAll(".role").forEach(function (b) { b.disabled = true; if (b.dataset.k === q[1]) b.classList.add("ok"); else if (b.dataset.k === k) b.classList.add("no") });
+            document.getElementById("fb").innerHTML = '<div class="fb">' + h + "<br>" + q[2] + '</div><button class="big next" onclick="nextQ()">' + (g.i < 9 ? "Next ▶" : "See my result ▶") + "</button>"
+        }
+        function nextQ() { g.i++; g.i < 10 ? ask() : result() }
+        function burst() { if (matchMedia("(prefers-reduced-motion:reduce)").matches) return; var c = ["#3ee08f", "#ffd23f", "#ff7ab8", "#4aa3f0", "#ff9f43"]; for (var i = 0; i < 22; i++) { var e = document.createElement("span"); e.className = "conf"; e.style.background = c[i % 5]; e.style.setProperty("--x", (Math.random() * 500 - 250) + "px"); e.style.setProperty("--y", (Math.random() * -300 - 40) + "px"); document.body.appendChild(e); setTimeout(function (x) { x.remove() }, 1000, e) } }
+        function result() {
+            g.scr = "result";
+
+            var t = g.r >= 9 ? ["Principal Unicorn 🦄", "You could start Monday."] : g.r >= 7 ? ["Senior Hire 🚀", "Recruiters would fight over you."] : g.r >= 5 ? ["Junior Hire 💼", "Solid start. Keep exploring."] : ["Curious Intern 🌱", "Great, now you know where to start."];
+            var w = Object.keys(g.miss).sort(function (a, b) { return g.miss[b] - g.miss[a] })[0];
+            show('<div class="card" style="text-align:center"><div class="tag">YOUR RESULT</div><div class="stat">' + g.s + '</div><p class="q">' + g.r + "/10 correct · " + t[0] + '</p><p class="sub">' + t[1] + "</p>" +
+                (w ? '<div class="fb">Ask us at the booth about <b class="g">' + R[w].i + " " + R[w].n + "</b>: " + R[w].t.toLowerCase() + ".</div>" : '<div class="fb"><b class="g">Perfect round!</b> You know every role.</div>') + "</div>" +
+                '<button class="big" onclick="startQuiz()">↻ Play again</button><button class="big alt" onclick="startMatch()">◆ Find the role that fits me</button><button class="big alt" onclick="menu()">⌂ Main menu</button>'); burst()
+        }
+        function startMatch() { nm(); g.mode = "match"; g.mi = 0; g.ans = []; g.sc = {}; KEYS.forEach(function (k) { g.sc[k] = 0 }); mq() }
+        function mq() {
+            g.scr = "match";
+            var q = M[g.mi];
+            show('<div class="hud"><span>Question <b>' + (g.mi + 1) + "/" + M.length + '</b></span></div><div class="bar"><i style="width:' + (g.mi / M.length * 100) + '%"></i></div><div class="card"><div class="tag">FIND MY ROLE</div><p class="q">' + q[0] + "</p></div>" +
+                q[1].map(function (o, i) { return '<button class="opt" onclick="ma(' + i + ')">' + o[0] + "</button>" }).join(""))
+        }
+        function ma(i) { g.ans.push(i); M[g.mi][1][i][1].forEach(function (k) { g.sc[k]++ }); g.mi++; g.mi < M.length ? mq() : mres() }
+        function mres() {
+            g.scr = "result";
+            var k = KEYS.slice().sort(function (a, b) { return g.sc[b] - g.sc[a] }), r = R[k[0]], r2 = R[k[1]];
+            show('<div class="card" style="text-align:center;border-color:' + r.c + '"><div class="tag">YOUR BEST MATCH</div><div class="stat" style="color:' + r.c + '">' + r.i + '</div><p class="q job" style="color:' + r.c + '">' + r.n + '</p><p class="sub">“' + r.t + '”</p><p style="line-height:1.5">' + r.d + '</p><div class="fb"><b class="g">Tools to learn:</b> ' + r.k + '</div><div class="fb"><b class="g">Where you can work:</b> ' + r.l + '</div><div class="fb">Close second: <b>' + r2.i + " " + r2.n + "</b></div></div>" +
+                '<button class="big" onclick="startMatch()">↻ Retake</button><button class="big alt" onclick="startQuiz()">▶ Play: Who Does What?</button><button class="big alt" onclick="menu()">⌂ Main menu</button>'); burst()
+        }
+        document.addEventListener("keydown", function (e) { var n = parseInt(e.key, 10); if (n >= 1 && n <= 6 && document.getElementById("bar") && !g.lock && g.q && document.querySelector(".role")) pick(KEYS[n - 1]) });
+        window.innerWidth >= 760 ? menu() : startQuiz();
+    </script>
+</body>
+
+</html>
